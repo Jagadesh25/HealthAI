@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Medical AI Assistant</title>
+  <style>
+    :root{
+      --bg:#0b0c10;
+      --panel:#121317;
+      --panel-2:#1a1c22;
+      --text:#e6e6e6;
+      --muted:#b8b8b8;
+      --acc:#5aa9e6;
+      --acc-2:#7ec8e3;
+      --border:#2a2d36;
+      --green:#26a69a;
+      --red:#e57373;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter, Segoe UI, Roboto, Helvetica, Arial, sans-serif}
+    .container{max-width:1100px;margin:32px auto;padding:0 16px}
+    .card{
+      background:linear-gradient(180deg,var(--panel),var(--panel-2));
+      border:1px solid var(--border);
+      border-radius:14px;
+      box-shadow:0 10px 24px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.02);
+      overflow:hidden;
+    }
+    .header{
+      padding:24px 24px 12px;
+      border-bottom:1px solid var(--border);
+    }
+    h1{margin:0;font-size:28px;letter-spacing:.2px}
+    .disclaimer{
+      margin-top:10px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.5;
+      background:rgba(255,255,255,.03);
+      border:1px dashed var(--border);
+      padding:10px 12px;
+      border-radius:10px;
+    }
+    .tabs{
+      display:flex;
+      gap:6px;
+      padding:12px 12px 0;
+      background:rgba(255,255,255,.02);
+      border-bottom:1px solid var(--border);
+    }
+    .tab{
+      appearance:none;
+      border:none;
+      background:transparent;
+      color:var(--muted);
+      padding:10px 14px;
+      border-radius:10px 10px 0 0;
+      cursor:pointer;
+      font-weight:600;
+      transition:all .15s ease;
+      position:relative;
+    }
+    .tab[aria-selected="true"]{
+      color:var(--text);
+      background:var(--panel-2);
+      border:1px solid var(--border);
+      border-bottom-color:transparent;
+      transform:translateY(1px);
+    }
+    .content{
+      padding:18px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+    @media (max-width:900px){
+      .grid{grid-template-columns:1fr}
+    }
+    .section{
+      background:rgba(255,255,255,.02);
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:16px;
+    }
+    .field{display:flex;flex-direction:column;gap:6px;margin-bottom:12px}
+    label{font-size:14px;color:var(--muted)}
+    textarea, input[type="number"], select{
+      background:var(--panel);
+      color:var(--text);
+      border:1px solid var(--border);
+      border-radius:10px;
+      padding:10px 12px;
+      font-size:14px;
+      width:100%;
+      outline:none;
+      transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    textarea{min-height:96px;resize:vertical}
+    textarea.output{min-height:360px;white-space:pre-wrap}
+    input[type="number"]{max-width:180px}
+    .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .btn{
+      appearance:none;border:none;cursor:pointer;
+      background:linear-gradient(180deg,var(--acc),var(--acc-2));
+      color:#0b0c10;font-weight:700;letter-spacing:.2px;
+      padding:10px 14px;border-radius:12px;transition:transform .06s ease, filter .15s ease;
+      box-shadow:0 6px 16px rgba(90,169,230,.25);
+    }
+    .btn:active{transform:translateY(1px)}
+    .muted{color:var(--muted);font-size:13px}
+    .footer{
+      padding:14px 18px;color:var(--muted);font-size:12px;border-top:1px solid var(--border);
+      display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px
+    }
+    .pill{
+      display:inline-block;padding:2px 8px;border-radius:999px;border:1px solid var(--border);
+      background:rgba(255,255,255,.03);font-size:12px;color:var(--muted)
+    }
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card" role="application" aria-label="Medical AI Assistant">
+      <div class="header">
+        <h1>Medical AI Assistant</h1>
+        <div class="disclaimer">
+          <strong>Disclaimer:</strong> This is for informational purposes only. Always consult healthcare professionals for medical advice.
+        </div>
+      </div>
+
+      <div class="tabs" role="tablist" aria-label="Assistant sections">
+        <button class="tab" role="tab" id="tab-disease" aria-controls="panel-disease" aria-selected="true">Disease Prediction</button>
+        <button class="tab" role="tab" id="tab-plan" aria-controls="panel-plan" aria-selected="false">Treatment Plans</button>
+      </div>
+
+      <div class="content">
+        <!-- Disease Prediction Panel -->
+        <section id="panel-disease" role="tabpanel" aria-labelledby="tab-disease">
+          <div class="grid">
+            <div class="section" aria-label="Disease input">
+              <div class="field">
+                <label for="symptoms">Enter symptoms</label>
+                <textarea id="symptoms" placeholder="e.g., fever, headache, cough, fatigue..."></textarea>
+              </div>
+              <div class="row">
+                <button id="btn-analyze" class="btn">Analyze Symptoms</button>
+                <span class="muted">The button is a demo placeholder (no backend connected).</span>
+              </div>
+            </div>
+
+            <div class="section" aria-label="Disease output">
+              <div class="field">
+                <label for="prediction">Possible conditions & recommendations</label>
+                <textarea id="prediction" class="output" readonly placeholder="Model output will appear here (placeholder)."></textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Treatment Plans Panel -->
+        <section id="panel-plan" role="tabpanel" aria-labelledby="tab-plan" hidden>
+          <div class="grid">
+            <div class="section" aria-label="Plan input">
+              <div class="field">
+                <label for="condition">Medical condition</label>
+                <textarea id="condition" placeholder="e.g., diabetes, hypertension, migraine..."></textarea>
+              </div>
+
+              <div class="row">
+                <div class="field">
+                  <label for="age">Age</label>
+                  <input type="number" id="age" value="30" min="0" max="120" />
+                </div>
+                <div class="field" style="min-width:180px">
+                  <label for="gender">Gender</label>
+                  <select id="gender">
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="field">
+                <label for="history">Medical history</label>
+                <textarea id="history" placeholder="Previous conditions, allergies, medications or None"></textarea>
+              </div>
+
+              <div class="row">
+                <button id="btn-plan" class="btn">Generate Treatment Plan</button>
+                <span class="muted">The button is a demo placeholder (no backend connected).</span>
+              </div>
+            </div>
+
+            <div class="section" aria-label="Plan output">
+              <div class="field">
+                <label for="plan-output">Personalized treatment plan</label>
+                <textarea id="plan-output" class="output" readonly placeholder="Model output will appear here (placeholder)."></textarea>
+              </div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <div class="footer">
+        <div>
+          <span class="pill">Demo UI</span>
+          <span class="pill">Tabs</span>
+          <span class="pill">Responsive</span>
+          <span class="pill">Accessible</span>
+        </div>
+        <div>For proper diagnosis and treatment, consult a licensed clinician.</div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Tab switching
+    const tabs = [
+      { tab: document.getElementById('tab-disease'), panel: document.getElementById('panel-disease') },
+      { tab: document.getElementById('tab-plan'), panel: document.getElementById('panel-plan') },
+    ];
+    function activateTab(target){
+      tabs.forEach(({tab, panel})=>{
+        const active = tab === target;
+        tab.setAttribute('aria-selected', active ? 'true' : 'false');
+        panel.hidden = !active;
+      });
+    }
+    tabs.forEach(({tab})=>{
+      tab.addEventListener('click', ()=> activateTab(tab));
+      tab.addEventListener('keydown', (e)=>{
+        if(e.key === 'ArrowRight' || e.key === 'ArrowLeft'){
+          e.preventDefault();
+          const idx = tabs.findIndex(t=>t.tab===tab);
+          const next = e.key === 'ArrowRight' ? (idx+1)%tabs.length : (idx-1+tabs.length)%tabs.length;
+          tabs[next].tab.focus();
+          activateTab(tabs[next].tab);
+        }
+      });
+    });
+
+    // Placeholder button actions
+    const analyzeBtn = document.getElementById('btn-analyze');
+    const symptoms = document.getElementById('symptoms');
+    const prediction = document.getElementById('prediction');
+
+    analyzeBtn.addEventListener('click', ()=>{
+      const s = symptoms.value.trim();
+      if(!s){
+        prediction.value = 'Please enter symptoms to analyze.';
+        return;
+      }
+      prediction.value = [
+        'This is a placeholder UI. Connect to your backend model to generate real outputs.',
+        '',
+        'Input symptoms:',
+        '• ' + s,
+        '',
+        'Possible conditions and recommendations:',
+        '• Condition A, Condition B (example)',
+        '• Rest, fluids; over-the-counter analgesics may help if appropriate',
+        '',
+        'IMPORTANT: This is for informational purposes only. Consult a healthcare professional for diagnosis and treatment.'
+      ].join('\\n');
+    });
+
+    const planBtn = document.getElementById('btn-plan');
+    const condition = document.getElementById('condition');
+    const age = document.getElementById('age');
+    const gender = document.getElementById('gender');
+    const history = document.getElementById('history');
+    const planOutput = document.getElementById('plan-output');
+
+    planBtn.addEventListener('click', ()=>{
+      const c = condition.value.trim();
+      const a = age.value;
+      const g = gender.value;
+      const h = history.value.trim() || 'None';
+
+      if(!c){
+        planOutput.value = 'Please enter a medical condition.';
+        return;
+      }
+      planOutput.value = [
+        'This is a placeholder UI. Connect to your backend model to generate real outputs.',
+        '',
+        'Patient profile:',
+        '• Condition: ' + c,
+        '• Age: ' + a,
+        '• Gender: ' + g,
+        '• History: ' + h,
+        '',
+        'Personalized treatment plan (example):',
+        '• Lifestyle: hydration, sleep hygiene, balanced diet',
+        '• Home remedies: warm compress, saltwater gargles (as appropriate)',
+        '• Medications: follow clinician guidance; check interactions and allergies',
+        '',
+        'IMPORTANT: This is for informational purposes only. Consult a healthcare professional for treatment.'
+      ].join('\\n');
+    });
+  </script>
+</body>
+</html>
+```
